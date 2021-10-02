@@ -6,21 +6,21 @@ from .dice import Roll, rollFactory
 
 
 class damageType(Enum):
-    Acid: auto()
-    Bludgeoning: auto()
-    Cold: auto()
-    Fire: auto()
-    Force: auto()
-    Lightning: auto()
-    Necrotic: auto()
-    Piercing: auto()
-    Poison: auto()
-    Psychic: auto()
-    Radiant: auto()
-    Slashing: auto()
-    Thunder: auto()
+    Acid = auto()
+    Bludgeoning = auto()
+    Cold = auto()
+    Fire = auto()
+    Force = auto()
+    Lightning = auto()
+    Necrotic = auto()
+    Piercing = auto()
+    Poison = auto()
+    Psychic = auto()
+    Radiant = auto()
+    Slashing = auto()
+    Thunder = auto()
 
-class DamageTypeUndefined(ValueError):
+class DamageTypeUndefined(KeyError):
 
     def __init__(self, damageType: str, message: str) -> None:
         super().__init__(message)
@@ -34,10 +34,12 @@ class Damage:
 class DamageFactory:
 
     def __call__(self, data: dict) -> Damage:
-        dmgType = data["damage_type"]["name"]
-        if not dmgType in damageType:
-            raise DamageTypeUndefined(dmgType, f"damageType enum does not have a definition for {dmgType}")
+        dmgTypeStr = data["damage_type"]["name"]
+        try:
+            dmgType = damageType[dmgTypeStr]
+        except KeyError as e:
+            raise DamageTypeUndefined(dmgTypeStr, f"damagetype enum does not have a definition for {dmgTypeStr}")
 
-        return Damage(damageType[dmgType], rollFactory(data["damage_dice"]))
+        return Damage(dmgType, rollFactory(data["damage_dice"]))
 
 damageFactory = DamageFactory()
