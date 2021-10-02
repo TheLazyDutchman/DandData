@@ -19,10 +19,12 @@ class Roll:
 
 class RollFactory:
 
-    def __call__(self, data: str) -> Roll:
-        dice, bonus = data.split('+')
+    def __call__(self, dice: str) -> Roll:
+        bonus = '0'
+        if '+' in dice:
+            dice, bonus = dice.split('+')
         amount, dice = dice.split('d')
 
-        return Roll(int(amount), diceType[dice], int(bonus))
+        return Roll(int(amount), diceType(int(dice)), int(bonus))
 
 rollFactory = RollFactory()

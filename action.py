@@ -16,13 +16,6 @@ class Action:
 class Attack(Action):
     attack_bonus: int
 
-class FactoryDataUnimplemented(Exception):
-
-    def __init__(self, data: dict, dataType: str, message: str) -> None:
-        super().__init__(message)
-        self.data = data
-        self.dataType = dataType
-
 class ActionFactory:
     damageFactory = damageFactory
 
@@ -34,13 +27,20 @@ class ActionFactory:
             data.pop("damage_dice")
 
         if "usage" in data:
-            raise FactoryDataUnimplemented(data, "usage", "we don't handle usage of actions yet")
+            print(data, "usage", "we don't handle usage of actions yet")
+            return
 
         if "dc" in data:
-            raise FactoryDataUnimplemented(data, "dc", "we don't handle dc of actions yet")
+            print(data, "dc", "we don't handle dc of actions yet")
+            return
 
         if "options" in data:
-            raise FactoryDataUnimplemented(data, "options", "we don't handle multi attacks yet")
+            print(data, "options", "we don't handle multi attacks yet")
+            return
+
+        if "attack_options" in data:
+            print(data, "attack_options", "we don't handle attack options yet")
+            return
 
         if "attack_bonus" in data:
             return Attack(**data)
