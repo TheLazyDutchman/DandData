@@ -1,8 +1,8 @@
 # DandData
 a library to store information from D&D in python dataclasses
 ## Supported API's
- - [x] [dnd5eapi]("http://www.dnd5eapi.co")
- - [ ] the [dndbeyond]("https://www.dndbeyond.com") api (they had this as a planned feature for years, but I doubt they will make it any time soon)
+ - [x] [dnd5eapi](http://www.dnd5eapi.co)
+ - [ ] the [dndbeyond](https://www.dndbeyond.com) api (they had this as a planned feature for years, but I doubt they will make it any time soon)
 ## Creatures
 ```python
 from DandData.creature import Creature
