@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from enum import Enum
+from enum import IntEnum
 
 
-class diceType(Enum):
+class diceType(IntEnum):
     d4 = 4
     d6 = 6
     d8 = 8
