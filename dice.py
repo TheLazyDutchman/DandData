@@ -17,6 +17,15 @@ class Roll:
     dice_type: diceType
     bonus: int
 
+    def getMinRoll(self) -> int:
+        return self.amount + self.bonus
+
+    def getMaxRoll(self) -> int:
+        return self.amount * self.dice_type + self.bonus
+
+    def __repr__(self) -> str:
+        return f"{self.amount}d{self.dice_type}+{self.bonus}"
+
 class RollFactory:
 
     def __call__(self, dice: str) -> Roll:
