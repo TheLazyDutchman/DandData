@@ -16,6 +16,16 @@ class Action:
 class Attack(Action):
     attack_bonus: int
 
+@dataclass
+class MultiAttackOption:
+    name: str
+    count: int
+    actionType: str
+
+@dataclass
+class MultiAttack(Action):
+    options: list[MultiAttackOption]
+
 class ActionFactory:
     damageFactory = damageFactory
 
@@ -31,8 +41,14 @@ class ActionFactory:
             return
 
         if "options" in data:
-            print(data, "options", "we don't handle multi attacks yet")
-            return
+            if data["options"]["choose"] != 1:
+                print("\n", data, "\n we don't handle multi attacks with multiple options to choose from")
+                return
+            
+            options = data["options"]["from"][0]
+            data["options"] = [MultiAttackOption(x["name"], x["count"], x["type"]) for x in options]
+
+            return MultiAttack(**data)
 
         if "attack_options" in data:
             print(data, "attack_options", "we don't handle attack options yet")
