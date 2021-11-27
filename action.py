@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from .damage import Damage, damageFactory
 
@@ -6,10 +7,18 @@ from .damage import Damage, damageFactory
 
 
 @dataclass
+class DifficultyClass:
+    abilityType: str
+    value: int
+    successType: str
+
+
+@dataclass
 class Action:
     name: str
     desc: str
     damage: list[Damage]
+    dc: Optional[DifficultyClass]
     
 
 @dataclass
@@ -37,8 +46,12 @@ class ActionFactory:
             return
 
         if "dc" in data:
-            print(data, "dc", "we don't handle dc of actions yet")
-            return
+            data["dc"] = DifficultyClass(
+                abilityType = data["dc"]["dc_type"]["name"],
+                value = data["dc"]["dc_value"],
+                successType = data["dc"]["success_type"])
+        else:
+            data["dc"] = None # the attack dataclass expects to get a dc at initialization, but most actions don't have one
 
         if "options" in data:
             if data["options"]["choose"] != 1:
@@ -56,5 +69,7 @@ class ActionFactory:
 
         if "attack_bonus" in data:
             return Attack(**data)
+
+        return Action(**data)
 
 actionFactory = ActionFactory()
