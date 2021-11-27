@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from .dice import Roll, rollFactory
+
 from .damage import Damage, damageFactory
 
 
@@ -14,11 +16,20 @@ class DifficultyClass:
 
 
 @dataclass
+class Usage:
+    pass
+@dataclass
+class RechargeOnRoll(Usage):
+    dice: Roll
+    minValue: int
+
+@dataclass
 class Action:
     name: str
     desc: str
     damage: list[Damage]
     dc: Optional[DifficultyClass]
+    usage: Optional[Usage]
     
 
 @dataclass
@@ -37,13 +48,22 @@ class MultiAttack(Action):
 
 class ActionFactory:
     damageFactory = damageFactory
+    rollFactory = rollFactory
 
     def __call__(self, data: dict) -> Action:
         data["damage"] = [self.damageFactory(dmg) for dmg in data["damage"]]
 
         if "usage" in data:
-            print(data, "usage", "we don't handle usage of actions yet")
-            return
+            usage = data["usage"]
+            if not usage["type"] == "recharge on roll":
+                print(data, "we don't handle a usage other than 'recharge on roll' yet")
+                return
+
+            data["usage"] = RechargeOnRoll(
+                dice = rollFactory(usage["dice"]), 
+                minValue = usage["min_value"])
+        else:
+            data["usage"] = None # the action dataclass expects to get a Usage at initialization, but most actions don't have one
 
         if "dc" in data:
             data["dc"] = DifficultyClass(
@@ -51,7 +71,7 @@ class ActionFactory:
                 value = data["dc"]["dc_value"],
                 successType = data["dc"]["success_type"])
         else:
-            data["dc"] = None # the attack dataclass expects to get a dc at initialization, but most actions don't have one
+            data["dc"] = None # the action dataclass expects to get a dc at initialization, but most actions don't have one
 
         if "options" in data:
             if data["options"]["choose"] != 1:
