@@ -3,6 +3,7 @@ from typing import Callable, Optional
 import uuid
 
 from .action import Action, actionFactory
+from .damage import damageType
 
 @dataclass
 class Creature:
@@ -14,7 +15,7 @@ class Creature:
     id: Optional[uuid.UUID] = field(default_factory=uuid.uuid4)
     rollList: dict[str, Callable] = field(default_factory=dict)
 
-    def Damage(self, amount: int) -> None:
+    def Damage(self, amount: int, dmgType: damageType) -> None:
         self.health -= amount
         
         if self.health < 0:
@@ -27,7 +28,7 @@ class CreatureFactory:
         actions = [self.actionFactory(action) for action in data['actions']]
         return Creature(
             name = data["name"],
-            armorClass = data["ac"],
+            armorClass = data["armor_class"],
             hitPoints = data["hit_points"],
             health = data["hit_points"],
             actions = [action for action in actions if action != None])
