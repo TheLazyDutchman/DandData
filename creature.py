@@ -1,10 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Callable, Optional
 import uuid
 
 from .action import Action, actionFactory
-
-numCreatures = 0
 
 @dataclass
 class Creature:
@@ -13,6 +11,7 @@ class Creature:
     health: int
     actions: list[Action]
     id: Optional[uuid.UUID] = field(default_factory=uuid.uuid4)
+    rollList: dict[str, Callable] = field(default_factory=dict)
 
     def Damage(self, amount: int) -> None:
         self.health -= amount
