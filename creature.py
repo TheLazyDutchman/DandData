@@ -7,7 +7,8 @@ from .action import Action, actionFactory
 @dataclass
 class Creature:
     name: str
-    hit_points: int
+    armorClass: int
+    hitPoints: int
     health: int
     actions: list[Action]
     id: Optional[uuid.UUID] = field(default_factory=uuid.uuid4)
@@ -26,7 +27,8 @@ class CreatureFactory:
         actions = [self.actionFactory(action) for action in data['actions']]
         return Creature(
             name = data["name"],
-            hit_points = data["hit_points"],
+            armorClass = data["ac"],
+            hitPoints = data["hit_points"],
             health = data["hit_points"],
             actions = [action for action in actions if action != None])
 
