@@ -122,13 +122,3 @@ class ActionFactory:
         return Action(**data)
 
 actionFactory = ActionFactory()
-
-[{'name': 'Magma Eruption', 
-'dc': {'dc_type': {'index': 'dex', 'name': 'DEX', 'url': '/api/ability-scores/dex'}, 'dc_value': 15, 'success_type': 'half'}, 
-'damage': [{'damage_type': {'index': 'fire', 'name': 'Fire', 'url': '/api/damage-types/fire'}, 'damage_dice': '6d6'}]}, 
-
-{'name': 'Tremor', 
-'dc': {'dc_type': {'index': 'dex', 'name': 'DEX', 'url': '/api/ability-scores/dex'}, 'dc_value': 15, 'success_type': 'none'}}, 
-
-{'name': 'Volcanic Gas', 
-'dc': {'dc_type': {'index': 'con', 'name': 'CON', 'url': '/api/ability-scores/con'}, 'dc_value': 13, 'success_type': 'none'}}]

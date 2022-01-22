@@ -31,9 +31,21 @@ class Damage:
     dmgType: damageType
     dice: Roll
 
+@dataclass
+class DamageOptions:
+    amount: int
+    options: list[Damage]
+
 class DamageFactory:
 
     def __call__(self, data: dict) -> Damage:
+        if "choose" in data:
+            return DamageOptions(
+                amount = data["choose"],
+                options = [self(x) for x in data["from"]]
+            )
+
+
         dmgTypeStr = data["damage_type"]["name"]
         try:
             dmgType = damageType[dmgTypeStr]
