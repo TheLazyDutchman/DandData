@@ -37,6 +37,11 @@ class Action:
     
 
 @dataclass
+class AttackOptions(Action):
+    amount: int
+    options: list[Action]
+
+@dataclass
 class Attack(Action):
     attack_bonus: int
 
@@ -65,6 +70,12 @@ class ActionFactory:
     rollFactory = rollFactory
 
     def __call__(self, data: dict) -> Action:
+        if not "desc" in data:
+            data["desc"] = ""
+
+        if not "damage" in data:
+            data["damage"] = []
+
         data["damage"] = [self.damageFactory(dmg) for dmg in data["damage"]]
 
         if "usage" in data:
@@ -102,8 +113,11 @@ class ActionFactory:
             return MultiAttack(**data)
 
         if "attack_options" in data:
-            print(data, "attack_options", "we don't handle attack options yet")
-            return
+            data["amount"] = data["attack_options"]["choose"]
+            data["options"] = [self(x) for x in data["attack_options"]["from"]]
+            data.pop("attack_options")
+
+            return AttackOptions(**data)
 
         if "attacks" in data:
             data["attacks"] = [
