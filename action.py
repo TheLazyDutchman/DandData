@@ -28,6 +28,11 @@ class PerDay(Usage):
     times: int
 
 @dataclass
+class AfterRest(Usage):
+    restTypes: list[str]
+
+
+@dataclass
 class Action:
     name: str
     desc: str
@@ -53,7 +58,8 @@ class MultiAttackOption:
 
 @dataclass
 class MultiAttack(Action):
-    options: list[MultiAttackOption]
+    amount: int
+    options: list[list[MultiAttackOption]]
 
 
 @dataclass
@@ -88,6 +94,9 @@ class ActionFactory:
             elif usage["type"] == "per day":
                 data["usage"] = PerDay(usage["times"])
 
+            elif usage["type"] == "recharge after rest":
+                data["usage"] = AfterRest(usage["rest_types"])
+
             else:
                 print(data, "we don't handle this type of usage yet\n\n")
                 return
@@ -103,12 +112,10 @@ class ActionFactory:
             data["dc"] = None # the action dataclass expects to get a dc at initialization, but most actions don't have one
 
         if "options" in data:
-            if data["options"]["choose"] != 1:
-                print("\n", data, "\n we don't handle multi attacks with multiple options to choose from")
-                return
+            data["amount"] = data["options"]["choose"]
             
-            options = data["options"]["from"][0]
-            data["options"] = [MultiAttackOption(x["name"], x["count"], x["type"]) for x in options]
+            options = data["options"]["from"]
+            data["options"] = [[MultiAttackOption(x["name"], x["count"], x["type"]) for x in option] for option in options]
 
             return MultiAttack(**data)
 
