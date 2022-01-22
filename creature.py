@@ -25,7 +25,11 @@ class CreatureFactory:
     actionFactory = actionFactory
 
     def __call__(self, data: dict):
-        actions = [self.actionFactory(action) for action in data['actions']]
+        if "actions" in data:
+            actions = [self.actionFactory(action) for action in data['actions']]
+        else:
+            actions = []
+            
         return Creature(
             name = data["name"],
             armorClass = data["armor_class"],
