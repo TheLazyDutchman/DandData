@@ -24,6 +24,10 @@ class RechargeOnRoll(Usage):
     minValue: int
 
 @dataclass
+class PerDay(Usage):
+    times: int
+
+@dataclass
 class Action:
     name: str
     desc: str
@@ -46,6 +50,16 @@ class MultiAttackOption:
 class MultiAttack(Action):
     options: list[MultiAttackOption]
 
+
+@dataclass
+class LairAttack:
+    name: str
+    dc: DifficultyClass
+
+@dataclass
+class LairActions(Action):
+    attacks: list[LairAttack]
+
 class ActionFactory:
     damageFactory = damageFactory
     rollFactory = rollFactory
@@ -55,13 +69,17 @@ class ActionFactory:
 
         if "usage" in data:
             usage = data["usage"]
-            if not usage["type"] == "recharge on roll":
-                print(data, "we don't handle a usage other than 'recharge on roll' yet")
-                return
+            if usage["type"] == "recharge on roll":
+                data["usage"] = RechargeOnRoll(
+                    dice = rollFactory(usage["dice"]), 
+                    minValue = usage["min_value"])
 
-            data["usage"] = RechargeOnRoll(
-                dice = rollFactory(usage["dice"]), 
-                minValue = usage["min_value"])
+            elif usage["type"] == "per day":
+                data["usage"] = PerDay(usage["times"])
+
+            else:
+                print(data, "we don't handle this type of usage yet\n\n")
+                return
         else:
             data["usage"] = None # the action dataclass expects to get a Usage at initialization, but most actions don't have one
 
@@ -87,9 +105,30 @@ class ActionFactory:
             print(data, "attack_options", "we don't handle attack options yet")
             return
 
+        if "attacks" in data:
+            data["attacks"] = [
+                LairAttack(x["name"], 
+                DifficultyClass(
+                    abilityType = x["dc"]["dc_type"]["name"],
+                    value = x["dc"]["dc_value"],
+                    successType = x["dc"]["success_type"])
+                ) for x in data["attacks"]]
+
+            return LairActions(**data)
+
         if "attack_bonus" in data:
             return Attack(**data)
 
         return Action(**data)
 
 actionFactory = ActionFactory()
+
+[{'name': 'Magma Eruption', 
+'dc': {'dc_type': {'index': 'dex', 'name': 'DEX', 'url': '/api/ability-scores/dex'}, 'dc_value': 15, 'success_type': 'half'}, 
+'damage': [{'damage_type': {'index': 'fire', 'name': 'Fire', 'url': '/api/damage-types/fire'}, 'damage_dice': '6d6'}]}, 
+
+{'name': 'Tremor', 
+'dc': {'dc_type': {'index': 'dex', 'name': 'DEX', 'url': '/api/ability-scores/dex'}, 'dc_value': 15, 'success_type': 'none'}}, 
+
+{'name': 'Volcanic Gas', 
+'dc': {'dc_type': {'index': 'con', 'name': 'CON', 'url': '/api/ability-scores/con'}, 'dc_value': 13, 'success_type': 'none'}}]

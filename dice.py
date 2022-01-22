@@ -3,6 +3,8 @@ from enum import IntEnum
 
 
 class diceType(IntEnum):
+    d1 = 1
+    d2 = 2
     d4 = 4
     d6 = 6
     d8 = 8
@@ -30,8 +32,13 @@ class RollFactory:
 
     def __call__(self, dice: str) -> Roll:
         bonus = '0'
+        if not 'd' in dice:
+            return Roll(int(dice), diceType.d1, 0)
+
         if '+' in dice:
             dice, bonus = dice.split('+')
+        if '-' in dice:
+            dice, bonus = dice.split('-')
         amount, dice = dice.split('d')
 
         return Roll(int(amount), diceType(int(dice)), int(bonus))
